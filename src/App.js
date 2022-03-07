@@ -1,21 +1,22 @@
-import Home from './Home';
-// import About from './components/About';
-// import Shop from './components/Shop';
-import React, { Component } from 'react';
+import Home from "./Home";
 
-import {BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import Dashboard from './Dashboard/Dashboard';
+import React, { Component } from "react";
+import { ChakraProvider } from "@chakra-ui/react";
+
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Dashboard from "./Dashboard/Dashboard";
 
 function App() {
-    return (
-    <Router>
+  return (
+    <ChakraProvider>
+      <Router>
         <Routes>
-          <Route exact path="/" element={<Home/>}/>
-          <Route exact path="/dashboard" element={<Dashboard/>}/>
-          
+          <Route exact path="/" element={<Home />} />
+          <Route exact path="/dashboard" element={<Dashboard />} />
         </Routes>
-    </Router>
-    )
+      </Router>
+    </ChakraProvider>
+  );
 }
 
-export default App
+export default App;

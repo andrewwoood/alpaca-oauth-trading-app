@@ -1,99 +1,92 @@
-import React from 'react';
-import './Dashboard.scss';
-import CandleStickChart from './Chart/Chart';
-import axios from 'axios';
-import Utils from '../Utils'
-import initialData from './Chart/initial-data.json'
+import React from "react";
+import "./Dashboard.scss";
+// import CandleStickChart from "./Chart/Chart";
+import axios from "axios";
+import Utils from "../Utils";
+import initialData from "./Chart/initial-data.json";
+
+import Chart from "./Chart/Chart";
+
+import { TypeChooser } from "react-stockcharts/lib/helper";
 
 class Dashboard extends React.Component {
-   
-     
-    state = {
-        symbol: 'SPY',
-        data:  initialData
-    }
+  state = {
+    symbol: "SPY",
+    data: initialData,
+  };
 
+  handleChange = (e) => {
+    this.setState({ symbol: e.target.value });
+  };
 
-    handleChange = (e) => {
-        this.setState({symbol: e.target.value});
-    }
+  getBars = async (_symbol, _auth_token) => {
+    var start = new Date();
+    start.setFullYear(start.getFullYear() - 5);
+    const end = new Date();
+    end.setDate(end.getDate() - 1);
 
-    getBars = async(_symbol, _auth_token) =>{
-
-      var start = new Date();
-      start.setFullYear(start.getFullYear() - 5);
-      const end = new Date();
-      end.setDate(end.getDate() - 1)
-      
-      
-      const response = await axios.get(`https://data.alpaca.markets/v2/stocks/${_symbol}/bars`, {
-        'headers': {
-          'Authorization': `Bearer ${_auth_token}`
+    const response = await axios.get(
+      `https://data.alpaca.markets/v2/stocks/${_symbol}/bars`,
+      {
+        headers: {
+          Authorization: `Bearer ${_auth_token}`,
         },
-        'params':{
-            'start': start.toISOString(),
-            'end': end.toISOString(),
-            'timeframe': '1Day',
-            'adjustment': 'all'
-        }
-      })
-      
-      if (response.data.bars === null) {
-        return
+        params: {
+          start: start.toISOString(),
+          end: end.toISOString(),
+          timeframe: "1Day",
+          adjustment: "all",
+        },
       }
+    );
 
-      const parsedData = Utils.parseResponse(response)
-
-      this.setState({data: parsedData})
-  }
-
-    
-
-    handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        if (window.localStorage.getItem('auth-token') === null){
-          var oauth_code = new URLSearchParams(window.location.search).get('code');
-          const auth_token = await Utils.getAuthToken(oauth_code)
-          window.localStorage.setItem('auth-token', auth_token)
-        }
-                    
-
-        const symbol = this.state.symbol
-        this.getBars(symbol, window.localStorage.getItem("auth-token") )
+    if (response.data.bars === null) {
+      return;
     }
-    
 
-    render() {
-        const { symbol } = this.state
-      return (
-        <div className="dashboard-container">
-            
+    const parsedData = Utils.parseResponse(response);
 
-            <div className="chart">
-                <label className="chart-symbol">Current Symbol: <b> {symbol.toUpperCase()} </b> </label>
-                <CandleStickChart data={this.state.data}  />
-            </div>
-            
+    this.setState({ data: parsedData });
+  };
 
-            <div className="form">
-                <form onSubmit={this.handleSubmit}>
-                <label>Symbol: 
-                    <input 
-                    type="text" 
-                    onChange={this.handleChange}
-                    />
-                </label>
-                <input type="submit" />
-                </form>
-            </div>
+  handleSubmit = async (e) => {
+    e.preventDefault();
 
-
-
-      </div> 
-      )
+    if (window.localStorage.getItem("auth-token") === null) {
+      var oauth_code = new URLSearchParams(window.location.search).get("code");
+      const auth_token = await Utils.getAuthToken(oauth_code);
+      window.localStorage.setItem("auth-token", auth_token);
     }
+
+    const symbol = this.state.symbol;
+    this.getBars(symbol, window.localStorage.getItem("auth-token"));
+  };
+
+  render() {
+    const { symbol } = this.state;
+    return (
+      <div className="dashboard-container">
+        <div className="chart">
+          <label className="chart-symbol">
+            Current Symbol: <b> {symbol.toUpperCase()} </b>{" "}
+          </label>
+          <TypeChooser>
+            {(type) => <Chart type={type} data={this.state.data} />}
+          </TypeChooser>
+        </div>
+
+        <div className="form">
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Symbol:
+              <input type="text" onChange={this.handleChange} />
+            </label>
+            <input type="submit" />
+          </form>
+        </div>
+      </div>
+    );
   }
-  
-  export default Dashboard
-  
+}
+
+export default Dashboard;

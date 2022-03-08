@@ -13,6 +13,40 @@ class Dashboard extends React.Component {
   state = {
     symbol: "SPY",
     data: initialData,
+    dummyData: [
+      {
+        date: "Tue Jan 05 2010 00:00:00 GMT-0700 (Mountain Standard Time)",
+        open: 200,
+        high: 202,
+        low: 198,
+        close: 200,
+        volume: 200000,
+      },
+      {
+        date: "Tue Jan 06 2010 00:00:00 GMT-0700 (Mountain Standard Time)",
+        open: 200,
+        high: 202,
+        low: 198,
+        close: 200,
+        volume: 200000,
+      },
+      {
+        date: "Tue Jan 07 2010 00:00:00 GMT-0700 (Mountain Standard Time)",
+        open: 200,
+        high: 202,
+        low: 198,
+        close: 200,
+        volume: 200000,
+      },
+      {
+        date: "Tue Jan 08 2010 00:00:00 GMT-0700 (Mountain Standard Time)",
+        open: 200,
+        high: 202,
+        low: 198,
+        close: 200,
+        volume: 200000,
+      },
+    ],
   };
 
   handleChange = (e) => {
@@ -71,7 +105,14 @@ class Dashboard extends React.Component {
             Current Symbol: <b> {symbol.toUpperCase()} </b>{" "}
           </label>
           <TypeChooser>
-            {(type) => <Chart type={type} data={this.state.data} />}
+            {(type) => (
+              <Chart
+                type={type}
+                width={500}
+                ratio={1}
+                data={this.state.dummyData}
+              />
+            )}
           </TypeChooser>
         </div>
 

@@ -1,9 +1,13 @@
 import React from "react";
 import "./Dashboard.scss";
-import CandleStickChart from "./Chart/Chart";
+// import CandleStickChart from "./Chart/Chart";
 import axios from "axios";
 import Utils from "../Utils";
 import initialData from "./Chart/initial-data.json";
+
+import Chart from "./Chart/Chart_New";
+
+import { TypeChooser } from "react-stockcharts/lib/helper";
 
 class Dashboard extends React.Component {
   state = {
@@ -66,7 +70,9 @@ class Dashboard extends React.Component {
           <label className="chart-symbol">
             Current Symbol: <b> {symbol.toUpperCase()} </b>{" "}
           </label>
-          <CandleStickChart data={this.state.data} />
+          <TypeChooser>
+            {(type) => <Chart type={type} data={this.state.data} />}
+          </TypeChooser>
         </div>
 
         <div className="form">

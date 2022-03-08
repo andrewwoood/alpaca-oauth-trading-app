@@ -22,7 +22,10 @@ class Home extends React.Component {
     return (
       <div className="home-container">
         <div className="content">
-          <h1 className="content-title"> My OAuth Trading App</h1>
+          <h1 className="content-title">
+            {" "}
+            My OAuth Trading App with Chakra UI
+          </h1>
           <div className="content-container">
             <Button onClick={this.handleSubmit}>
               <Input

@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Dashboard from "./Dashboard/Dashboard";
+import Dashboard from "./Dashboard/Dashboard_New";
 
 function App() {
   return (

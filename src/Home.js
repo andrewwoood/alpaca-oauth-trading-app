@@ -19,6 +19,7 @@ class Home extends React.Component {
   };
 
   render() {
+    console.log(process.env);
     return (
       <div className="home-container">
         <div className="content">

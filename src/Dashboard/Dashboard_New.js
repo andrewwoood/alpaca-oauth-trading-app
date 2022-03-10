@@ -45,6 +45,7 @@ class Dashboard extends React.Component {
     this.setState({ data: parsedData });
   };
 
+  // Need to change this later
   handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -55,6 +56,7 @@ class Dashboard extends React.Component {
     }
 
     const symbol = this.state.symbol;
+    // This will be different? We aren't going to use getbars
     this.getBars(symbol, window.localStorage.getItem("auth-token"));
   };
 

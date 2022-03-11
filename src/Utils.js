@@ -3,6 +3,20 @@ import { timeParse } from "d3-time-format";
 import axios from "axios";
 import dotenv from "dotenv";
 
+dotenv.config();
+
+// Next 3 declarations are for old data
+const parseDate = timeParse("%Y-%m-%d");
+
+export function getData() {
+  const promiseMSFT = fetch(
+    "https://cdn.rawgit.com/rrag/react-stockcharts/master/docs/data/MSFT.tsv"
+  )
+    .then((response) => response.text())
+    .then((data) => tsvParse(data, parseData(parseDate)));
+  return promiseMSFT;
+}
+
 function parseData(parse) {
   return function (d) {
     d.date = parse(d.date);
@@ -16,7 +30,18 @@ function parseData(parse) {
   };
 }
 
-dotenv.config();
+const Alpaca = require("@alpacahq/alpaca-trade-api");
+const API_KEY = process.env.API_KEY;
+const API_SECRET = process.env.API_SECRET_KEY;
+
+export function getData(symbol) {
+  const alpaca = new Alpaca({
+    keyId: API_KEY,
+    secretKey: API_SECRET,
+    paper: false,
+  });
+  // await bars = alpaca.getBars(symbol, )
+}
 
 const Utils = {
   async getAuthToken(oauth_code) {
@@ -28,7 +53,7 @@ const Utils = {
       client_secret: process.env.REACT_APP_CLIENT_SECRET,
       redirect_uri: process.env.REACT_APP_REDIRECT_URI,
     };
-    console.log(body);
+
     // encode data into form encoding
     const encodedBody = Object.keys(body)
       .map((key) => `${key}=${encodeURIComponent(body[key])}`)
@@ -66,22 +91,6 @@ const Utils = {
     return data;
   },
 };
-
-const parseDate = timeParse("%Y-%m-%d");
-
-const Alpaca = require("@alpacahq/alpaca-trade-api");
-// Change these to environment variables later
-const API_KEY = "PKFS1ZV369ACSGDA5YZT";
-const API_SECRET = "P8LwhiIrOCxyCiLxmJ480rwMDniWAYQVZ0gP7JOu";
-
-export function getData() {
-  const promiseMSFT = fetch(
-    "https://cdn.rawgit.com/rrag/react-stockcharts/master/docs/data/MSFT.tsv"
-  )
-    .then((response) => response.text())
-    .then((data) => tsvParse(data, parseData(parseDate)));
-  return promiseMSFT;
-}
 
 class DataStream {
   constructor({ apiKey, secretKey, feed }) {

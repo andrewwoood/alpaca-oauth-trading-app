@@ -30,7 +30,7 @@ class CandleStickChart extends React.Component {
         ratio={ratio}
         width={width}
         margin={margin}
-        // type={type}
+        type={type}
         seriesName="MSFT"
         data={data}
         xAccessor={xAccessor}

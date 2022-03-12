@@ -1,9 +1,9 @@
 import { tsvParse } from "d3-dsv";
 import { timeParse } from "d3-time-format";
 import axios from "axios";
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 
-dotenv.config();
+// dotenv.config();
 
 // Next 3 declarations are for old data
 const parseDate = timeParse("%Y-%m-%d");
@@ -30,18 +30,11 @@ function parseData(parse) {
   };
 }
 
+// Alpaca stuff
+
 const Alpaca = require("@alpacahq/alpaca-trade-api");
 const API_KEY = process.env.API_KEY;
 const API_SECRET = process.env.API_SECRET_KEY;
-
-export function getData(symbol) {
-  const alpaca = new Alpaca({
-    keyId: API_KEY,
-    secretKey: API_SECRET,
-    paper: false,
-  });
-  // await bars = alpaca.getBars(symbol, )
-}
 
 const Utils = {
   async getAuthToken(oauth_code) {
@@ -92,65 +85,4 @@ const Utils = {
   },
 };
 
-class DataStream {
-  constructor({ apiKey, secretKey, feed }) {
-    this.alpaca = new Alpaca({
-      keyId: apiKey,
-      secretKey,
-      feed,
-    });
-
-    const socket = this.alpaca.data_stream_v2;
-
-    socket.onConnect(function () {
-      console.log("Connected");
-      socket.subscribeForQuotes(["AAPL"]);
-      socket.subscribeForTrades(["FB"]);
-      socket.subscribeForBars(["SPY"]);
-      socket.subscribeForStatuses(["*"]);
-    });
-
-    socket.onError((err) => {
-      console.log(err);
-    });
-
-    socket.onStockTrade((trade) => {
-      console.log(trade);
-    });
-
-    socket.onStockQuote((quote) => {
-      console.log(quote);
-    });
-
-    socket.onStockBar((bar) => {
-      console.log(bar);
-    });
-
-    socket.onStatuses((s) => {
-      console.log(s);
-    });
-
-    socket.onStateChange((state) => {
-      console.log(state);
-    });
-
-    socket.onDisconnect(() => {
-      console.log("Disconnected");
-    });
-
-    socket.connect();
-
-    // unsubscribe from FB after a second
-    setTimeout(() => {
-      socket.unsubscribeFromTrades(["FB"]);
-    }, 1000);
-  }
-}
-
-// let stream = new DataStream({
-//   apiKey: API_KEY,
-//   secretKey: API_SECRET,
-//   feed: "IEX",
-//   paper: true,
-// });
 export default Utils;

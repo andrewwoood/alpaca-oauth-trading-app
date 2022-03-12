@@ -1,3 +1,7 @@
+import { timeParse } from "d3-time-format";
+
+const parseDate = timeParse("%Y-%m-%d");
+
 const Alpaca = require("@alpacahq/alpaca-trade-api");
 require("dotenv").config();
 
@@ -9,6 +13,18 @@ const alpaca = new Alpaca({
   secretKey: API_SECRET,
   paper: true,
 });
+
+function parseBar(bar) {
+  let parsedBar = {
+    date: parseDate(bar.Timestamp),
+    open: bar.Open,
+    high: bar.High,
+    low: bar.Low,
+    close: bar.Close,
+    volume: bar.Volume,
+  };
+  return parsedBar;
+}
 
 class DataStream {
   constructor({ apiKey, secretKey, feed }) {
@@ -39,7 +55,9 @@ class DataStream {
     });
 
     socket.onCryptoBar((bar) => {
-      console.log(bar);
+      // We should send the parsed bar back to chart. Need to solve problem of
+      // multiple bars coming same minute. Is it possible we'd miss a bar?
+      console.log(parseBar(bar));
     });
 
     socket.onStateChange((state) => {

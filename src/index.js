@@ -9,22 +9,26 @@
 //   document.getElementById("root")
 // );
 
-import dotenv from "dotenv";
 import React from "react";
 import { render } from "react-dom";
 import Chart from "./Dashboard/Chart/Chart_New";
 import { getData } from "./Utils";
 import { TypeChooser } from "react-stockcharts/lib/helper";
+import { timeParse, utcParse } from "d3-time-format";
 
-dotenv.config({ path: "../.env" });
+// console.log(dotenv.config());
 
 const Alpaca = require("@alpacahq/alpaca-trade-api");
+const parseDate = timeParse("%Y-%m-%dT%H:%M:%SZ");
 
-const API_KEY = process.env.API_KEY;
-const API_SECRET = process.env.API_SECRET_KEY;
+// const API_KEY = process.env.API_KEY;
+// const API_SECRET = process.env.API_SECRET_KEY;
+
+// REMOVE THIS BEFORE COMMITTING
+const API_KEY = "";
+const API_SECRET = "";
 
 console.log(process.env.API_KEY);
-
 console.log(API_KEY);
 console.log(API_SECRET);
 
@@ -36,7 +40,8 @@ const alpaca = new Alpaca({
 
 function parseBar(bar) {
   let parsedBar = {
-    date: bar.Timestamp,
+    date: parseDate(bar.Timestamp),
+    // date: bar.Timestamp,
     open: bar.Open,
     high: bar.High,
     low: bar.Low,
@@ -52,9 +57,19 @@ async function getHistoricalBars(symbol, options) {
 
   for await (let bar of resp) {
     let parsedBar = parseBar(bar);
-    console.log(parsedBar);
     bars.push(parsedBar);
   }
+
+  bars.sort((a, b) => {
+    if (a.date > b.date) {
+      return 1;
+    } else if (a.date < b.date) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+
   return bars;
 }
 
@@ -67,14 +82,14 @@ var options = {
   start: start,
   end: end,
   timeframe: "1Min",
+  // exchanges: "FTXU",
+  // limit: 100, // Limit throws an error after returning all bars
 };
 
+// Alpaca Implementation
 class ChartComponent extends React.Component {
-  state = {
-    apcaData: getHistoricalBars(symbol, options),
-  };
   componentDidMount() {
-    getData().then((data) => {
+    getHistoricalBars(symbol, options).then((data) => {
       this.setState({ data });
     });
   }
@@ -84,11 +99,29 @@ class ChartComponent extends React.Component {
     }
     return (
       <TypeChooser>
-        {(type) => <Chart type={type} data={this.state.apcaData} />}
+        {(type) => <Chart type={type} data={this.state.data} />}
       </TypeChooser>
     );
   }
 }
 
+// Example implementation
+// class ChartComponent extends React.Component {
+//   componentDidMount() {
+//     getData().then((data) => {
+//       this.setState({ data });
+//     });
+//   }
+//   render() {
+//     if (this.state == null) {
+//       return <div>Loading...</div>;
+//     }
+//     return (
+//       <TypeChooser>
+//         {(type) => <Chart type={type} data={this.state.data} />}
+//       </TypeChooser>
+//     );
+//   }
+// }
+
 render(<ChartComponent />, document.getElementById("root"));
-// export default ChartComponent;

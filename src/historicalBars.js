@@ -44,7 +44,8 @@ var options = {
   start: start,
   end: end,
   timeframe: "1Min",
-  // limit: limit, // Limit gives an error after all bars return.
+  exchanges: "FTXU",
+  // limit: limit,
 };
 
 getHistoricalBars(symbol, options);

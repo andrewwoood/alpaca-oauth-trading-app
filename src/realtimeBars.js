@@ -1,7 +1,3 @@
-import { timeParse } from "d3-time-format";
-
-const parseDate = timeParse("%Y-%m-%d");
-
 const Alpaca = require("@alpacahq/alpaca-trade-api");
 require("dotenv").config();
 
@@ -16,7 +12,7 @@ const alpaca = new Alpaca({
 
 function parseBar(bar) {
   let parsedBar = {
-    date: parseDate(bar.Timestamp),
+    date: bar.Timestamp,
     open: bar.Open,
     high: bar.High,
     low: bar.Low,
@@ -34,7 +30,6 @@ class DataStream {
       feed,
     });
 
-    // const socket = alpaca.data_stream_v2;
     const socket = alpaca.crypto_stream_v2;
 
     socket.onConnect(function () {

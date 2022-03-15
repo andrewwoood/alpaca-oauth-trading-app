@@ -30,7 +30,7 @@ function parseData(parse) {
   };
 }
 
-// Alpaca stuff
+// Alpaca stuff from Rahul's app
 
 const Alpaca = require("@alpacahq/alpaca-trade-api");
 const API_KEY = process.env.API_KEY;

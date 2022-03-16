@@ -1,88 +1,48 @@
-import { tsvParse } from "d3-dsv";
 import { timeParse } from "d3-time-format";
-import axios from "axios";
-// import dotenv from "dotenv";
-
-// dotenv.config();
-
-// Next 3 declarations are for old data
-const parseDate = timeParse("%Y-%m-%d");
-
-export function getData() {
-  const promiseMSFT = fetch(
-    "https://cdn.rawgit.com/rrag/react-stockcharts/master/docs/data/MSFT.tsv"
-  )
-    .then((response) => response.text())
-    .then((data) => tsvParse(data, parseData(parseDate)));
-  return promiseMSFT;
-}
-
-function parseData(parse) {
-  return function (d) {
-    d.date = parse(d.date);
-    d.open = +d.open;
-    d.high = +d.high;
-    d.low = +d.low;
-    d.close = +d.close;
-    d.volume = +d.volume;
-
-    return d;
-  };
-}
-
-// Alpaca stuff from Rahul's app
 
 const Alpaca = require("@alpacahq/alpaca-trade-api");
-const API_KEY = process.env.API_KEY;
-const API_SECRET = process.env.API_SECRET_KEY;
+const parseDate = timeParse("%Y-%m-%dT%H:%M:%SZ");
 
-const Utils = {
-  async getAuthToken(oauth_code) {
-    // returns Authorization Token once we have our OAuth token
-    const body = {
-      grant_type: "authorization_code",
-      code: oauth_code,
-      client_id: process.env.REACT_APP_CLIENT_ID,
-      client_secret: process.env.REACT_APP_CLIENT_SECRET,
-      redirect_uri: process.env.REACT_APP_REDIRECT_URI,
-    };
+const API_KEY = "";
+const API_SECRET = "";
 
-    // encode data into form encoding
-    const encodedBody = Object.keys(body)
-      .map((key) => `${key}=${encodeURIComponent(body[key])}`)
-      .join("&");
-    console.log(body);
-    // submit POST request
-    const response = await axios({
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      method: "POST",
-      url: "https://api.alpaca.markets/oauth/token",
-      data: encodedBody,
-    });
+const alpaca = new Alpaca({
+  keyId: API_KEY,
+  secretKey: API_SECRET,
+  paper: true,
+});
 
-    const { data } = response;
-    return data.access_token;
-  },
+function parseBar(bar) {
+  let parsedBar = {
+    date: parseDate(bar.Timestamp),
+    open: bar.Open,
+    high: bar.High,
+    low: bar.Low,
+    close: bar.Close,
+    volume: bar.Volume,
+  };
+  return parsedBar;
+}
 
-  parseResponse(response) {
-    const { bars } = response.data;
-    const data = [];
-    for (let i = 0; i < bars.length; i++) {
-      const bar = bars[i];
-      const point = {
-        date: bar.t,
-        open: bar.o,
-        low: bar.l,
-        high: bar.h,
-        close: bar.c,
-        volume: bar.v,
-      };
-      data.push(point);
+export async function getHistoricalBars(symbol, options) {
+  // console.log(`Querying bars for ${symbol}`);
+  let resp = alpaca.getCryptoBars(symbol, options);
+  const bars = [];
+
+  for await (let bar of resp) {
+    let parsedBar = parseBar(bar);
+    bars.push(parsedBar);
+  }
+
+  bars.sort((a, b) => {
+    if (a.date > b.date) {
+      return 1;
+    } else if (a.date < b.date) {
+      return -1;
+    } else {
+      return 0;
     }
-    return data;
-  },
-};
-
-export default Utils;
+  });
+  // console.log(bars);
+  return bars;
+}

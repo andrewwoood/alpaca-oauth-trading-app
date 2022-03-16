@@ -1,74 +1,57 @@
 import React from "react";
 import "./Dashboard.scss";
-import CandleStickChart from "./Chart/Chart";
-import axios from "axios";
-import Utils from "../Utils";
-import initialData from "./Chart/initial-data.json";
+import ChartComponent from "./Chart/ChartComponent";
+import { getHistoricalBars } from "../Utils";
 
 class Dashboard extends React.Component {
-  state = {
-    symbol: "SPY",
-    data: initialData,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: null,
+      symbol: "ETHUSD",
+      options: {
+        start: new Date(new Date().setDate(new Date().getDate() - 5)),
+        end: new Date(),
+        timeframe: "1Min",
+        exchanges: "CBSE",
+      },
+    };
+  }
 
   handleChange = (e) => {
     this.setState({ symbol: e.target.value });
   };
 
-  getBars = async (_symbol, _auth_token) => {
-    var start = new Date();
-    start.setFullYear(start.getFullYear() - 5);
-    const end = new Date();
-    end.setDate(end.getDate() - 1);
-
-    const response = await axios.get(
-      `https://data.alpaca.markets/v2/stocks/${_symbol}/bars`,
-      {
-        headers: {
-          Authorization: `Bearer ${_auth_token}`,
-        },
-        params: {
-          start: start.toISOString(),
-          end: end.toISOString(),
-          timeframe: "1Day",
-          adjustment: "all",
-        },
-      }
-    );
-
-    if (response.data.bars === null) {
-      return;
-    }
-
-    const parsedData = Utils.parseResponse(response);
-
-    this.setState({ data: parsedData });
-  };
-
-  // Need to change this later
+  // On pressing submit, need to replace data with new crypto bars
   handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (window.localStorage.getItem("auth-token") === null) {
-      var oauth_code = new URLSearchParams(window.location.search).get("code");
-      const auth_token = await Utils.getAuthToken(oauth_code);
-      window.localStorage.setItem("auth-token", auth_token);
-    }
-
-    const symbol = this.state.symbol;
-    // This will be different? We aren't going to use getbars
-    this.getBars(symbol, window.localStorage.getItem("auth-token"));
+    getHistoricalBars(this.state.symbol, this.state.options).then((data) => {
+      console.log(`Querying for ${this.state.symbol} and changing data to:`);
+      console.log(data);
+      this.setState({ data: data });
+    });
   };
 
+  componentDidMount() {
+    getHistoricalBars(this.state.symbol, this.state.options).then((data) => {
+      this.setState({ data: data });
+    });
+    // Put getRealtimeBars here? Pass in this.state.data in so we can append
+  }
+
   render() {
-    const { symbol } = this.state;
+    if (this.state.data == null) {
+      return <div>Loading...</div>;
+    }
+    console.log(this.state);
     return (
       <div className="dashboard-container">
         <div className="chart">
           <label className="chart-symbol">
-            Current Symbol: <b> {symbol.toUpperCase()} </b>{" "}
+            Current Symbol: <b> {this.state.symbol} </b>{" "}
           </label>
-          <CandleStickChart data={this.state.data} />
+          <ChartComponent symbol={this.state.symbol} data={this.state.data} />
         </div>
 
         <div className="form">

@@ -1,5 +1,10 @@
+import { timeParse } from "d3-time-format";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const Alpaca = require("@alpacahq/alpaca-trade-api");
-require("dotenv").config();
+const parseDate = timeParse("%Y-%m-%dT%H:%M:%SZ");
 
 const API_KEY = process.env.API_KEY;
 const API_SECRET = process.env.API_SECRET_KEY;
@@ -12,7 +17,7 @@ const alpaca = new Alpaca({
 
 function parseBar(bar) {
   let parsedBar = {
-    date: bar.Timestamp,
+    date: parseDate(bar.Timestamp),
     open: bar.Open,
     high: bar.High,
     low: bar.Low,
@@ -71,5 +76,4 @@ let stream = new DataStream({
   apiKey: API_KEY,
   secretKey: API_SECRET,
   feed: "sip",
-  // paper: true, // This is not necessary right?
 });

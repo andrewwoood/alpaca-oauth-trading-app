@@ -1,5 +1,10 @@
+import { timeParse } from "d3-time-format";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const Alpaca = require("@alpacahq/alpaca-trade-api");
-require("dotenv").config();
+const parseDate = timeParse("%Y-%m-%dT%H:%M:%SZ");
 
 const API_KEY = process.env.API_KEY;
 const API_SECRET = process.env.API_SECRET_KEY;
@@ -12,7 +17,7 @@ const alpaca = new Alpaca({
 
 function parseBar(bar) {
   let parsedBar = {
-    date: bar.Timestamp,
+    date: parseDate(bar.Timestamp),
     open: bar.Open,
     high: bar.High,
     low: bar.Low,
@@ -28,9 +33,19 @@ async function getHistoricalBars(symbol, options) {
 
   for await (let bar of resp) {
     let parsedBar = parseBar(bar);
-    console.log(parsedBar);
     bars.push(parsedBar);
   }
+
+  bars.sort((a, b) => {
+    if (a.date > b.date) {
+      return 1;
+    } else if (a.date < b.date) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+
   return bars;
 }
 
@@ -44,7 +59,7 @@ var options = {
   start: start,
   end: end,
   timeframe: "1Min",
-  exchanges: "FTXU",
+  // exchanges: "FTXU",
   // limit: limit,
 };
 

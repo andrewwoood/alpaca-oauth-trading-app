@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import "./Chart.scss";
 
 import { scaleTime } from "d3-scale";
-import { utcDay, utcMinute } from "d3-time";
+import { utcMinute } from "d3-time";
 
 import { ChartCanvas, Chart } from "react-stockcharts";
 import { CandlestickSeries } from "react-stockcharts/lib/series";
@@ -14,7 +14,7 @@ import { last, timeIntervalBarWidth } from "react-stockcharts/lib/utils";
 class CandleStickChart extends React.Component {
   render() {
     const { type, data } = this.props;
-    console.log("Here Inside Chart");
+    console.log("Inside chart component with data:");
     console.log(data);
     const height = 500;
     const width = 1000;
@@ -25,8 +25,6 @@ class CandleStickChart extends React.Component {
       xAccessor(data[data.length - 100]),
       xAccessor(last(data)),
     ];
-    console.log(xExtents);
-    console.log(xExtents[0] > xExtents[1]);
     return (
       <ChartCanvas
         height={height}
@@ -44,7 +42,6 @@ class CandleStickChart extends React.Component {
           <XAxis axisAt="bottom" orient="bottom" ticks={6} />
           <YAxis axisAt="left" orient="left" ticks={5} />
           <CandlestickSeries width={timeIntervalBarWidth(utcMinute)} />
-          {/* <CandlestickSeries width={timeIntervalBarWidth(utcDay)} /> */}
         </Chart>
       </ChartCanvas>
     );

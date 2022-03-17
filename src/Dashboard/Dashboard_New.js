@@ -8,15 +8,21 @@ class Dashboard extends React.Component {
     super(props);
     this.state = {
       data: null,
-      symbol: "ETHUSD",
+      symbol: "BTCUSD",
       options: {
         start: new Date(new Date().setDate(new Date().getDate() - 5)),
         end: new Date(),
         timeframe: "1Min",
         exchanges: "CBSE",
       },
+      socket: null,
     };
   }
+
+  getRealtimeBars = () => {
+    let URL = "wss://stream.data.alpaca.markets/v1beta1/crypto";
+    this.state.socket = new WebSocket(URL);
+  };
 
   handleChange = (e) => {
     this.setState({ symbol: e.target.value });
@@ -27,24 +33,41 @@ class Dashboard extends React.Component {
     e.preventDefault();
 
     getHistoricalBars(this.state.symbol, this.state.options).then((data) => {
-      console.log(`Querying for ${this.state.symbol} and changing data to:`);
-      console.log(data);
+      // console.log(`Querying for ${this.state.symbol} and changing data to:`);
+      // console.log(data);
+
+      console.log("State data is:");
       this.setState({ data: data });
+      console.log(this.state.data);
+      // I'll need to create a new websocket as well
     });
   };
 
   componentDidMount() {
-    getHistoricalBars(this.state.symbol, this.state.options).then((data) => {
-      this.setState({ data: data });
-    });
-    // Put getRealtimeBars here? Pass in this.state.data in so we can append
+    getHistoricalBars(this.state.symbol, this.state.options)
+      .then((data) => {
+        this.setState({ data: data });
+      })
+      .then(() => {
+        // Make socket connection?
+        let URL = "wss://stream.data.alpaca.markets/v1beta1/crypto";
+        // this.state.socket = new WebSocket(URL);
+        const socket = new WebSocket(URL);
+        socket.onopen = function (evt) {
+          console.log(evt);
+        };
+        console.log(socket);
+        // socket.on("message", (stream) => {
+        // console.log(stream);
+        // });
+      });
   }
 
   render() {
     if (this.state.data == null) {
       return <div>Loading...</div>;
     }
-    console.log(this.state);
+    console.log("Render inside dashboard");
     return (
       <div className="dashboard-container">
         <div className="chart">

@@ -72,8 +72,8 @@ class DataStream {
   }
 }
 
-let stream = new DataStream({
-  apiKey: API_KEY,
-  secretKey: API_SECRET,
-  feed: "sip",
-});
+// let stream = new DataStream({
+//   apiKey: API_KEY,
+//   secretKey: API_SECRET,
+//   feed: "sip",
+// });

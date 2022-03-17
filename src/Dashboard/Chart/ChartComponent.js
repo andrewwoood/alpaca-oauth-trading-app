@@ -1,11 +1,11 @@
 import React from "react";
-import { render } from "react-dom";
 import Chart from "./Chart_New";
 import { TypeChooser } from "react-stockcharts/lib/helper";
-import { timeParse } from "d3-time-format";
-import { getHistoricalBars } from "../../Utils";
 
 class ChartComponent extends React.Component {
+  // I think the issue with this not updating is that the
+  // constructor is only run at the beginning, and won't run again
+  // after receiving new data.
   constructor(props) {
     super(props);
     console.log("Constructor with properties:");

@@ -1,10 +1,10 @@
 import Home from "./Home";
 
-import React, { Component } from "react";
+import React from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Dashboard from "./Dashboard/Dashboard_New";
+import Dashboard from "./Dashboard/Dashboard";
 
 function App() {
   return (

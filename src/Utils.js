@@ -26,6 +26,18 @@ function parseBar(bar) {
   return parsedBar;
 }
 
+export function parseRealtimeBar(bar) {
+  let parsedBar = {
+    date: parseDate(bar.t),
+    open: bar.o,
+    high: bar.h,
+    low: bar.l,
+    close: bar.c,
+    volume: bar.v,
+  };
+  return parsedBar;
+}
+
 export async function getHistoricalBars(symbol, options) {
   // console.log(`Querying bars for ${symbol}`);
   let resp = alpaca.getCryptoBars(symbol, options);

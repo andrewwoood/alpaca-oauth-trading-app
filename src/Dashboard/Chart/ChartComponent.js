@@ -19,10 +19,11 @@ class ChartComponent extends React.Component {
     if (this.state == null) {
       return <div>Loading...</div>;
     }
+    console.log("Data inside chart component:");
+    console.log(this.state.data);
     return (
       <TypeChooser>
         {(type) => <Chart type={type} data={this.state.data} />}
-        {/* {(type) => <Chart type={type} data={this.data} />} */}
       </TypeChooser>
     );
   }

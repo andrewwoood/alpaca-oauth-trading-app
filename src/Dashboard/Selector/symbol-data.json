@@ -1,0 +1,82 @@
+[
+  {
+    "id": 0,
+    "symbol": "AAVEUSD"
+  },
+  {
+    "id": 1,
+    "symbol": "BATUSD"
+  },
+  {
+    "id": 2,
+    "symbol": "BTCUSD"
+  },
+  {
+    "id": 3,
+    "symbol": "BCHUSD"
+  },
+  {
+    "id": 4,
+    "symbol": "LINKUSD"
+  },
+  {
+    "id": 5,
+    "symbol": "DAIUSD"
+  },
+  {
+    "id": 6,
+    "symbol": "DOGEUSD"
+  },
+  {
+    "id": 7,
+    "symbol": "ETHUSD"
+  },
+  {
+    "id": 8,
+    "symbol": "GRTUSD"
+  },
+  {
+    "id": 9,
+    "symbol": "LTCUSD"
+  },
+  {
+    "id": 10,
+    "symbol": "MKRUSD"
+  },
+  {
+    "id": 11,
+    "symbol": "MATICUSD"
+  },
+  {
+    "id": 12,
+    "symbol": "PAXGUSD"
+  },
+  {
+    "id": 13,
+    "symbol": "SHIBUSD"
+  },
+  {
+    "id": 14,
+    "symbol": "SOLUSD"
+  },
+  {
+    "id": 15,
+    "symbol": "USDTUSD"
+  },
+  {
+    "id": 16,
+    "symbol": "TRXUSD"
+  },
+  {
+    "id": 17,
+    "symbol": "UNIUSD"
+  },
+  {
+    "id": 18,
+    "symbol": "WBTCUSD"
+  },
+  {
+    "id": 19,
+    "symbol": "YFIUSD"
+  }
+]

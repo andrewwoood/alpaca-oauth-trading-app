@@ -13,6 +13,35 @@ const alpaca = new Alpaca({
   paper: true,
 });
 
+const cbseOptions = {
+  start: new Date(new Date().setDate(new Date().getDate() - 5)),
+  end: new Date(),
+  timeframe: "1Min",
+  exchanges: "CBSE",
+};
+
+const ftxuOptions = {
+  start: new Date(new Date().setDate(new Date().getDate() - 5)),
+  end: new Date(),
+  timeframe: "1Min",
+  exchanges: "FTXU",
+};
+
+const msToMinutes = 1000 * 60;
+
+export function createEmptyBar(previousBar) {
+  let emptyBar = {
+    date: new Date(new Date().setTime(previousBar.date.getTime() + 1000 * 60)),
+    open: previousBar.close * 1,
+    high: previousBar.close,
+    low: previousBar.close,
+    close: previousBar.close * 1,
+    volume: 0,
+  };
+  // console.log(emptyBar);
+  return emptyBar;
+}
+
 function parseBar(bar) {
   let parsedBar = {
     date: parseDate(bar.Timestamp),
@@ -37,8 +66,33 @@ export function parseRealtimeBar(bar) {
   return parsedBar;
 }
 
-export async function getHistoricalBars(symbol, options) {
-  // console.log(`Querying bars for ${symbol}`);
+export function fillBars(bars) {
+  // Fill the empty space in the bars array if they exist
+  let filledBars = [bars[0]];
+  for (let i = 0; i < bars.length - 1; i++) {
+    let currentBar = bars[i];
+    let nextBar = bars[i + 1];
+    let timeDiff = (nextBar.date - currentBar.date) / msToMinutes;
+
+    let lastBar = currentBar;
+    // If the time difference is more than one, fill the space with empty bars
+    for (let j = 0; j < timeDiff - 1; j++) {
+      let emptyBar = createEmptyBar(lastBar);
+      filledBars.push(emptyBar);
+      lastBar = emptyBar;
+    }
+    filledBars.push(nextBar);
+  }
+  return filledBars;
+}
+
+export async function getHistoricalBars(symbol) {
+  let options = null;
+  if (symbol == "BTCUSD" || symbol == "ETHUSD") {
+    options = cbseOptions;
+  } else {
+    options = ftxuOptions;
+  }
   let resp = alpaca.getCryptoBars(symbol, options);
   const bars = [];
 
@@ -56,6 +110,7 @@ export async function getHistoricalBars(symbol, options) {
       return 0;
     }
   });
-  // console.log(bars);
-  return bars;
+
+  let filledBars = fillBars(bars);
+  return filledBars;
 }

@@ -1,0 +1,25 @@
+symbols = [
+  "AAVEUSD",
+  "BATUSD",
+  "BTCUSD",
+  "BCHUSD",
+  "LINKUSD",
+  "DAIUSD",
+  "DOGEUSD",
+  "ETHUSD",
+  "GRTUSD",
+  "LTCUSD",
+  "MKRUSD",
+  "MATICUSD",
+  "PAXGUSD",
+  "SHIBUSD",
+  "SOLUSD",
+  "SUSHIUSD",
+  "USDTUSD",
+  "TRXUSD",
+  "UNIUSD",
+  "WBTCUSD",
+  "YFIUSD",
+];
+
+for (let i = 0; i < symbols.length; i++) {}

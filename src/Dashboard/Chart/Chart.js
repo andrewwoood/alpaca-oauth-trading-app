@@ -13,7 +13,8 @@ import { last, timeIntervalBarWidth } from "react-stockcharts/lib/utils";
 
 class CandleStickChart extends React.Component {
   render() {
-    const { type, data } = this.props;
+    // const { data } = this.props;
+    const { data } = this.props;
     console.log("Inner most chart component with data:");
     console.log(data);
     const height = 500;
@@ -31,7 +32,6 @@ class CandleStickChart extends React.Component {
         ratio={ratio}
         width={width}
         margin={margin}
-        type={type}
         seriesName="BTCUSD"
         data={data}
         xAccessor={xAccessor}
@@ -52,12 +52,8 @@ CandleStickChart.propTypes = {
   data: PropTypes.array.isRequired,
   width: PropTypes.number.isRequired,
   ratio: PropTypes.number.isRequired,
-  type: PropTypes.oneOf(["svg", "hybrid"]).isRequired,
 };
 
-CandleStickChart.defaultProps = {
-  type: "svg",
-};
 CandleStickChart = fitWidth(CandleStickChart);
 
 export default CandleStickChart;

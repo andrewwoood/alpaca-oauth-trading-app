@@ -29,8 +29,9 @@ const ftxuOptions = {
 
 const msToMinutes = 1000 * 60;
 
-export function createEmptyBar(previousBar) {
+function createEmptyBar(previousBar) {
   let emptyBar = {
+    // Creates a new date object one minute ahead of previous bar
     date: new Date(new Date().setTime(previousBar.date.getTime() + 1000 * 60)),
     open: previousBar.close * 1,
     high: previousBar.close,
@@ -38,7 +39,6 @@ export function createEmptyBar(previousBar) {
     close: previousBar.close * 1,
     volume: 0,
   };
-  // console.log(emptyBar);
   return emptyBar;
 }
 
@@ -66,8 +66,8 @@ export function parseRealtimeBar(bar) {
   return parsedBar;
 }
 
+// Fill the empty space in the bars array if they exist
 export function fillBars(bars) {
-  // Fill the empty space in the bars array if they exist
   let filledBars = [bars[0]];
   for (let i = 0; i < bars.length - 1; i++) {
     let currentBar = bars[i];
@@ -88,7 +88,7 @@ export function fillBars(bars) {
 
 export async function getHistoricalBars(symbol) {
   let options = null;
-  if (symbol == "BTCUSD" || symbol == "ETHUSD") {
+  if (symbol === "BTCUSD" || symbol === "ETHUSD") {
     options = cbseOptions;
   } else {
     options = ftxuOptions;

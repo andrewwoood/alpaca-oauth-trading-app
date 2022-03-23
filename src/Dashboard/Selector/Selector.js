@@ -1,4 +1,5 @@
 import React from "react";
+import "./Selector.scss";
 import symbols from "./symbol-data.json";
 import {
   Button,
@@ -23,19 +24,19 @@ class Selector extends React.Component {
   render() {
     return (
       <div>
-        <Table size="sm">
+        <Table className="buttons" size="sm">
           <Thead>
             <Tr>
-              <Th>Symbol</Th>
+              {/* <Th>Symbol</Th> */}
               <Th>Render Data</Th>
             </Tr>
           </Thead>
           <Tbody>
             {this.state.symbolData.map((symbol) => (
               <Tr>
-                <Td>{symbol.symbol}</Td>
+                {/* <Td>{symbol.symbol}</Td> */}
                 <Button onClick={() => this.props.handler(symbol.symbol)}>
-                  CHANGE
+                  {symbol.symbol}
                 </Button>
               </Tr>
             ))}

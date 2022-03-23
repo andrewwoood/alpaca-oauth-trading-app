@@ -1,6 +1,5 @@
 import React from "react";
 import Chart from "./Chart";
-import { TypeChooser } from "react-stockcharts/lib/helper";
 
 class ChartComponent extends React.Component {
   constructor(props) {
@@ -14,11 +13,7 @@ class ChartComponent extends React.Component {
     if (this.state == null) {
       return <div>Loading...</div>;
     }
-    return (
-      <TypeChooser>
-        {(type) => <Chart type={type} data={this.props.data} />}
-      </TypeChooser>
-    );
+    return <Chart data={this.props.data} />;
   }
 }
 

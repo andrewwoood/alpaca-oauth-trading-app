@@ -1,6 +1,6 @@
 import React from "react";
 import "./Dashboard.scss";
-import ChartComponent from "./Chart/ChartComponent";
+import Chart from "./Chart/Chart.js";
 import Selector from "./Selector/Selector.js";
 import { getHistoricalBars, parseRealtimeBar, fillBars } from "../Utils";
 
@@ -11,33 +11,22 @@ class Dashboard extends React.Component {
       data: null,
       prevSymbol: "BTCUSD",
       symbol: "BTCUSD",
-      socket: null,
     };
+    this.socket = null;
     this.handleSelection = this.handleSelection.bind(this);
     this.apcaCredentials = {
       action: "auth",
-      key: "",
-      secret: "",
+      key: "<YOUR-KEY-HERE>",
+      secret: "<YOUR-SECRET-HERE>",
     };
     this.wsURL =
       "wss://stream.data.alpaca.markets/v1beta1/crypto?exchanges=CBSE,FTXU";
   }
 
   handleSelection = async (symbol) => {
-    console.log(`Changing symbol to ${symbol}`);
-
     const data = await getHistoricalBars(symbol);
     this.setState({ data: data });
     this.setState({ symbol: symbol });
-    this.getNewRealtimeBars();
-  };
-
-  // On pressing submit, need to replace data with new crypto bars
-  handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const data = await getHistoricalBars(this.state.symbol);
-    this.setState({ data: data });
     this.getNewRealtimeBars();
   };
 
@@ -50,8 +39,8 @@ class Dashboard extends React.Component {
       action: "subscribe",
       bars: [this.state.symbol],
     };
-    this.state.socket.send(JSON.stringify(unSubscribeObject));
-    this.state.socket.send(JSON.stringify(subscribeObject));
+    this.socket.send(JSON.stringify(unSubscribeObject));
+    this.socket.send(JSON.stringify(subscribeObject));
     this.setState({ prevSymbol: this.state.symbol });
   };
 
@@ -71,11 +60,12 @@ class Dashboard extends React.Component {
         data: [...this.state.data, ...filledBars],
       });
       return;
+    } else {
+      // If we received the correct bar, insert it directly and update
+      this.setState({
+        data: [...this.state.data, parsedBar],
+      });
     }
-    // The case where we receive the correct bar at the correct time
-    this.setState({
-      data: [...this.state.data, parsedBar],
-    });
   };
 
   initializeSocket = () => {
@@ -86,7 +76,6 @@ class Dashboard extends React.Component {
     const socket = new WebSocket(this.wsURL);
 
     socket.onmessage = (msg) => {
-      console.log(msg);
       const { data } = msg;
       let parsedMsg = JSON.parse(data)[0];
       // Looking specifically for messages that are bars
@@ -95,11 +84,11 @@ class Dashboard extends React.Component {
       }
     };
 
-    // Once connection is established, authenticate
-    socket.onopen = (evt) => {
-      this.setState({ socket: socket });
-      socket.send(JSON.stringify(this.apcaCredentials));
-      socket.send(JSON.stringify(subscribeObject));
+    // Once connection is open, authenticate then subscribe to symbol's bars
+    socket.onopen = () => {
+      this.socket = socket;
+      this.socket.send(JSON.stringify(this.apcaCredentials));
+      this.socket.send(JSON.stringify(subscribeObject));
     };
   };
 
@@ -117,7 +106,6 @@ class Dashboard extends React.Component {
     if (this.state.data == null) {
       return <div>Loading...</div>;
     }
-    console.log("Render inside dashboard");
     return (
       <div className="dashboard-container">
         <div className="selector">
@@ -127,7 +115,7 @@ class Dashboard extends React.Component {
           <label className="chart-symbol">
             Current Symbol: <b> {this.state.symbol} </b>{" "}
           </label>
-          <ChartComponent symbol={this.state.symbol} data={this.state.data} />
+          <Chart data={this.state.data} />
         </div>
       </div>
     );

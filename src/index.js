@@ -8,6 +8,3 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById("root")
 );
-
-// Get symbol from selector later
-// render(<ChartComponent symbol="BTCUSD" />, document.getElementById("root"));

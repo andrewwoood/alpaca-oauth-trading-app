@@ -1,5 +1,3 @@
-import Home from "./Home";
-
 import React from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 
@@ -11,8 +9,7 @@ function App() {
     <ChakraProvider>
       <Router>
         <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route exact path="/dashboard" element={<Dashboard />} />
+          <Route exact path="/" element={<Dashboard />} />
         </Routes>
       </Router>
     </ChakraProvider>

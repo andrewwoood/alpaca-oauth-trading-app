@@ -3,16 +3,16 @@ import { timeParse } from "d3-time-format";
 const Alpaca = require("@alpacahq/alpaca-trade-api");
 const parseDate = timeParse("%Y-%m-%dT%H:%M:%SZ");
 
-// REMOVE BEFORE PUSHING
-const API_KEY = "";
-const API_SECRET = "";
+const API_KEY = "<YOUR-KEY-HERE>";
+const API_SECRET = "<YOUR-SECRET-HERE>";
 
 const alpaca = new Alpaca({
   keyId: API_KEY,
   secretKey: API_SECRET,
-  paper: true,
+  paper: false, // Change to true if using a paper account
 });
 
+const cbseCoins = { BTCUSD: true, ETHUSD: true, LTCUSD: true, BCHUSD: true };
 const cbseOptions = {
   start: new Date(new Date().setDate(new Date().getDate() - 5)),
   end: new Date(),
@@ -88,14 +88,14 @@ export function fillBars(bars) {
 
 export async function getHistoricalBars(symbol) {
   let options = null;
-  if (symbol === "BTCUSD" || symbol === "ETHUSD") {
+  if (symbol in cbseCoins === true) {
     options = cbseOptions;
   } else {
     options = ftxuOptions;
   }
-  let resp = alpaca.getCryptoBars(symbol, options);
-  const bars = [];
 
+  let bars = [];
+  let resp = alpaca.getCryptoBars(symbol, options);
   for await (let bar of resp) {
     let parsedBar = parseBar(bar);
     bars.push(parsedBar);
